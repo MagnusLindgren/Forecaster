@@ -36,6 +36,30 @@ body {
     justify-content: center;
     align-items: center;
     border-bottom: 2px solid cadetblue; 
+    position: relative;
+}
+
+#searchBox {
+    width: 20%;
+    border: 3px solid cadetblue;
+    border-right: none;
+    padding: 5px;
+    height: 20px;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    color: #9DBFAF;
+}
+
+#searchButton {
+    width: 40px;
+    height: 36px;
+    border: 1px solid cadetblue;
+    background: cadetblue;
+    text-align: center;
+    color: azure;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    font-size: 20px;
 }
 
 .check-box {

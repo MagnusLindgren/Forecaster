@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>City Travel</title>
     <link rel="stylesheet" href="css/index.css">
+    <!-- Font awesome -->     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">  
     <script src="js/script.js"></script>
 </head>
 <body>
@@ -17,7 +19,7 @@
         <!-- 
             TODO 
                 X Header med logga och företagsnamn 
-                * Sektion med sökruta och "tickboxes"
+                X Sektion med sökruta och "tickboxes"
                 * Sektion med sökresultat
                 * Resultat rutor, möjligtvis med JS.
         -->
@@ -25,7 +27,8 @@
         <section>
             <div class="search-panel">
                 <input type="text" id="searchBox" placeholder="Search..">
-                <button type="button" id="searchButton">Go</button>
+                <button type="button" id="searchButton"><i class="fa fa-search"></i></button>
+                
                 <div class="check-box">
                     <label>
                         <input type="checkbox" id="weather"><span> Only Weather</span>
@@ -33,9 +36,9 @@
                     <label>
                         <input type="checkbox" id="attractions"><span> Only attractions</span>
                     </label>
-                    <legend>
+                    <label>
                         <input type="checkbox" id="filter"><span> Filter alphabetically</span>
-                    </legend>
+                    </label>
                 </div>
                 <div class="check-box">
                     

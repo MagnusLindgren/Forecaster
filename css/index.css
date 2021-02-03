@@ -13,17 +13,19 @@ body {
 
 .header {
     display: flex;
-    flex-direction: row;
     justify-content: left;
-    border: chocolate;
+    align-items: center;
     position: fixed;
+    width: 100%;
+    padding: 1em;
+    border-bottom: 2px solid cadetblue; 
 }
 
 .header img {
-    width: 5em;
+    width: 4em;
 }
 
-.header-text {
-    margin: 2em;
-    font-size: 30px;
+.header h1 {    
+    font-size: 50px;
+    margin-left: 1em;
 }

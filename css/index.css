@@ -15,7 +15,7 @@ body {
     display: flex;
     justify-content: left;
     align-items: center;
-    position: fixed;
+    position: relative;
     width: 100%;
     padding: 1em;
     border-bottom: 2px solid cadetblue; 
@@ -29,3 +29,21 @@ body {
     font-size: 50px;
     margin-left: 1em;
 }
+
+.search-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px solid cadetblue; 
+}
+
+.check-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:flex-start;
+    margin-left: 1em;
+    padding: 1em;
+}
+

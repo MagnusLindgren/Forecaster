@@ -1,6 +1,5 @@
 /* TODO 
-    search function
-    
-
-
+    * Fix the API
+    * search function
+    * make checkboxes work
 */

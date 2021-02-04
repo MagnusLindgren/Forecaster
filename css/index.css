@@ -72,12 +72,15 @@ body {
     padding: 1em;
 }
 
+#cityName {
+    margin-left: 1em;
+}
+
 .resultPanel {
     display: flex;
     flex-direction: row;
-    justify-content:right;
-    align-items:center;
-    
+    justify-content: center;
+    align-items: baseline;    
     padding: 2em;
 }
 
@@ -90,7 +93,7 @@ body {
     border: 2px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     margin: 2em auto;    
-    max-width: 33%;
+    max-width: 25em;
     min-width: 10em;
     max-height: 50em;
     padding: 1em;

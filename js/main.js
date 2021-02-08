@@ -13,19 +13,35 @@ function pageLoaded() {
     const CLIENT_SECRET = "WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM";
     const SEARCHBUTTON = document.getElementById('searchButton');
     let cityUrl = 'https://api.foursquare.com/v2/venues/explore';   
-    let cityName = "helsingborg";
-    
+    let today = dateBuilder();
 
     SEARCHBUTTON.onclick = function() {
         let searchTerm = document.getElementById('searchBox').value;
         console.log("Search value = " + searchTerm);
-        let url = `${cityUrl}?near=${searchTerm}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20210206&limit=10`;
+        let url = `${cityUrl}?near=${searchTerm}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=${today}&limit=10`;
         fetchAPI(url)
             .then(result => console.log(result))
     }
 
-    
+}
 
+/* Funktion för att skapa datum som jag skapade för att förenkla url:en ytterligare*/
+function dateBuilder() {
+    let dateToday = new Date();
+    let todaysDate, y, m, d;
+
+    y = dateToday.getFullYear().toString();
+    m = (dateToday.getMonth()+1).toString();
+    d = dateToday.getDate().toString();
+
+    if (m.length < 2) 
+    m = '0' + m;
+    if (d.length < 2) 
+    d = '0' + d;
+
+    todaysDate = (y + m + d);
+
+    return todaysDate;
 }
 
 async function fetchAPI(url) {

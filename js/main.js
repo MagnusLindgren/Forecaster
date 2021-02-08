@@ -7,20 +7,20 @@
 "useStrict";
 document.addEventListener("DOMContentLoaded", pageLoaded);
 
-
-
-
 function pageLoaded() {
-    let cityUrl = new URL('https://api.foursquare.com/v2/venues/explore?client_id=UT23XCWOFEUB3EXA40EQXRVCLN1NTE1XEJLS1JUNJAWQFSYV&client_secret=WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM&v=20180323&limit=1&ll=40.7243,-74.0018&query=coffee');
-    //let weatherUrl = new URL('https://api.openweathermap.org/data/2.5/weather?q={Göterborg}&appid={984e8b07157055164de5d508d1e7e094}');
-    let searchBox = document.getElementById("searchBox");
-    const SEARCHBUTTON = document.getElementById("searchButton");
-    let cityName = document.getElementById("cityName");
-    SEARCHBUTTON.onclick = () => clearResults(cityName);
+    /* Variables */
+    const CLIENT_ID = "UT23XCWOFEUB3EXA40EQXRVCLN1NTE1XEJLS1JUNJAWQFSYV";
+    const CLIENT_SECRET = "WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM";
+    const SEARCHBUTTON = document.getElementById('searchButton');
+    let cityUrl = 'https://api.foursquare.com/v2/venues/explore';   
+    let cityName = "helsingborg";
 
-    /* Test Area */
-    fetchAPI(cityUrl);
-    console.log(cityUrl);
+   
+
+    fetch(`${cityUrl}?near=${cityName}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20210206&limit=10`)
+        .then(response => response.json())
+        .then(result => console.log(result))
+
 }
 
 async function fetchAPI(url) {
@@ -28,11 +28,10 @@ async function fetchAPI(url) {
         let response = await fetch(url);
         if (response.ok) {
             let jsonResponse = await response.json();
-            console.log(url + " loaded successful");
+            console.log(url + " loaded successfully");
             return jsonResponse;
         } else {
             console.log(url + " not loaded successfully");
-            alert("Network error");
         }        
     } catch (error) {
             console.log("Error");
@@ -40,9 +39,7 @@ async function fetchAPI(url) {
     
 }
 
-function searchAPI(searchTerm) {
-
-}
+/* For future 
 
 function createSearchResult(count) {
     for (let i = 0; i < count; i++) {
@@ -52,6 +49,7 @@ function createSearchResult(count) {
         let CityName = document.createElement("h3");
     }
 }
+*/
 
 function clearResults(input) {   
     if (input != null){

@@ -14,12 +14,17 @@ function pageLoaded() {
     const SEARCHBUTTON = document.getElementById('searchButton');
     let cityUrl = 'https://api.foursquare.com/v2/venues/explore';   
     let cityName = "helsingborg";
+    
 
-   
+    SEARCHBUTTON.onclick = function() {
+        let searchTerm = document.getElementById('searchBox').value;
+        console.log("Search value = " + searchTerm);
+        let url = `${cityUrl}?near=${searchTerm}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20210206&limit=10`;
+        fetchAPI(url)
+            .then(result => console.log(result))
+    }
 
-    fetch(`${cityUrl}?near=${cityName}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20210206&limit=10`)
-        .then(response => response.json())
-        .then(result => console.log(result))
+    
 
 }
 

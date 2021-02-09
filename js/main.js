@@ -18,7 +18,7 @@ function pageLoaded() {
     SEARCHBUTTON.onclick = function() {
         let searchTerm = document.getElementById('searchBox').value;
         console.log("Search value = " + searchTerm);
-        let url = `${cityUrl}?near=${searchTerm}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=${today}&limit=10`;
+        url = new URL(`${cityUrl}?near=${searchTerm}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=${today}&limit=10`);
         fetchAPI(url)
             .then(result => console.log(result))
     }

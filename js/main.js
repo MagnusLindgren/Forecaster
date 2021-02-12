@@ -1,20 +1,18 @@
-/* TODO 
-    * Fix the API
-    * search function
-    * make checkboxes work
-    * Function that deletes previous results
-*/
 "use strict";
 
+// Viktiga variablar
 const searchButton = document.getElementById('searchButton');
+const clientId = 'UT23XCWOFEUB3EXA40EQXRVCLN1NTE1XEJLS1JUNJAWQFSYV';
+const clientSecret = 'WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM';
+const appID = '984e8b07157055164de5d508d1e7e094';
 
 searchButton.addEventListener('click', function() {
-    const result = document.querySelectorAll('.result');
-    clearResults(result);
+    const result = document.querySelectorAll('.result');    
     const onlyWeather = document.querySelector('#weather:checked');
     const onlyAttractions = document.querySelector('#attractions:checked');
     let searchTerm = document.getElementById('searchBox').value;
-    
+    clearResults(result);
+
     //Ser till så att vi inte skickar tomma request till API:n
     if (searchTerm != null && searchTerm != "") {
         // Kolla om checkbox för only weather är checked så den inte hämtar i onödan
@@ -43,7 +41,7 @@ function getWeatherUrl(city) {
 
     // Sökparametrarna jag vill hämta
     weatherUrl.searchParams.append('q', city);
-    weatherUrl.searchParams.append('appid', '984e8b07157055164de5d508d1e7e094');
+    weatherUrl.searchParams.append('appid', appID);
     weatherUrl.searchParams.append('mode', 'json');
     weatherUrl.searchParams.append('units', 'metric');
     weatherUrl.searchParams.append('lang', 'se');
@@ -58,8 +56,8 @@ function getVenueUrl(city) {
 
     // Sökparametrarna jag vill hämta
     venueUrl.searchParams.append('near', city);
-    venueUrl.searchParams.append('client_id', 'UT23XCWOFEUB3EXA40EQXRVCLN1NTE1XEJLS1JUNJAWQFSYV');
-    venueUrl.searchParams.append('client_secret', 'WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM');
+    venueUrl.searchParams.append('client_id', clientId);
+    venueUrl.searchParams.append('client_secret', clientSecret);
     venueUrl.searchParams.append('v', today);
     venueUrl.searchParams.append('limit', '10');
 
@@ -101,14 +99,6 @@ async function fetchApi(url) {
     }    
 }
 
-function createVenueCard(city, i) {     
-    //const cityName = document.querySelector('#cityName');
-    cityName.innerText = city.response.headerFullLocation;
-
-    //const venue = document.querySelector('.resultCard');
-    venue.innerHTML = `${prefix.name} <br> ${prefix.location.address}`;
-}
-
 function createWeatherCard(city) {
     let main = document.querySelector("main");
     let section = document.createElement("section");
@@ -135,6 +125,15 @@ function createWeatherCard(city) {
     cityName.classList.add('cityName');
 }
 
+function imgUrl(venue) {
+    const imgUrl = new URL(`https://api.foursquare.com/v2/venues/${venue.id}/photos`);
+    const today = dateBuilder();
+
+    imgUrl.searchParams.append('client_id', clientId);
+    imgUrl.searchParams.append('client_secret', clientSecret);
+    imgUrl.searchParams.append('v', today);
+}
+
 function createVenueCard(city) {
     let main = document.querySelector("main");
     let section = document.createElement("section");
@@ -146,6 +145,7 @@ function createVenueCard(city) {
         let paragraph = document.createElement("p");
         
         let prefix = city.response.groups[0].items[i].venue;
+        //let img = fetchApi(imgUrl(prefix));
 
         section.append(cityName);
         
@@ -153,9 +153,9 @@ function createVenueCard(city) {
         div2.append(paragraph);
         
         paragraph.innerHTML = `${prefix.name}
-                                <br> ${prefix.categories[0].name} 
-                                <br> ${prefix.location.formattedAddress}`
-                                ;
+                                <br> ${prefix.categories[0].name}                                
+                                <br> ${prefix.location.formattedAddress}
+                                `;
         
         div2.classList.add('resultCard');
     }

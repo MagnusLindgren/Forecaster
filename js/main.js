@@ -117,13 +117,14 @@ function createWeatherCard(city) {
     let div2 = document.createElement("div");
     let paragraph = document.createElement("p");
 
-    section.append(cityName);        
+    section.append(cityName);       
     div1.append(div2)
     div2.append(paragraph);
     section.append(div1);
+    
     main.append(section);
 
-    cityName.innerText = city.name;
+    cityName.innerText = `Väder i ${city.name}`;
     paragraph.innerHTML = `Väder:  ${city.weather[0].description} 
                         <br> Tempratur: ${city.main.temp}
                         `;
@@ -131,6 +132,7 @@ function createWeatherCard(city) {
     div1.classList.add('resultPanel');
     div2.classList.add('resultCard');
     section.classList.add('result');
+    cityName.classList.add('cityName');
 }
 
 function createVenueCard(city) {
@@ -138,12 +140,6 @@ function createVenueCard(city) {
     let section = document.createElement("section");
     let div1 = document.createElement("div");
     let cityName = document.createElement("h3");
-
-    section.append(div1);
-    main.append(section);
-    
-    div1.classList.add('resultPanel');
-    section.classList.add('result');
 
     for (let i = 0; i < city.response.groups[0].items.length; i++) {        
         let div2 = document.createElement("div");
@@ -163,13 +159,23 @@ function createVenueCard(city) {
         
         div2.classList.add('resultCard');
     }
+  
+    section.append(cityName);
+    section.append(div1);            
+    main.append(section);
+    
+    cityName.innerText = `Sevärt i ${city.response.headerFullLocation}`;
+
+    div1.classList.add('resultPanel');
+    section.classList.add('result');
+    cityName.classList.add('cityName');
+
+
     
 }
 
 function clearResults(input) {   
     for (let i = 0; i < input.length; i++) {
         input[i].remove();
-    }
-        
-    
+    }    
 }

@@ -19,7 +19,7 @@ searchButton.addEventListener('click', function() {
         if (onlyWeather == null) {
             fetchApi(getVenueUrl(searchTerm))
                 .then(response => {
-                    createVenueCard(response);
+                    createSearchResult(response);
                 })
         }
 
@@ -27,7 +27,7 @@ searchButton.addEventListener('click', function() {
         if (onlyAttractions == null) {
         fetchApi(getWeatherUrl(searchTerm))
             .then(response => {
-                console.log(response);
+                createSearchResult(response);
             }) 
         }
     } else {
@@ -59,6 +59,7 @@ function getVenueUrl(city) {
     venueUrl.searchParams.append('client_id', 'UT23XCWOFEUB3EXA40EQXRVCLN1NTE1XEJLS1JUNJAWQFSYV');
     venueUrl.searchParams.append('client_secret', 'WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM');
     venueUrl.searchParams.append('v', today);
+    venueUrl.searchParams.append('limit', '10');
 
     return venueUrl;
 }
@@ -98,27 +99,49 @@ async function fetchApi(url) {
     }    
 }
 
-function createVenueCard(city) {    
-    let cityName = document.querySelector('#cityName');
+function createVenueCard(city, i) { 
+    
+    //const cityName = document.querySelector('#cityName');
     cityName.innerText = city.response.headerFullLocation;
 
-    let prefix = city.response.groups[0].items[0].venue;
+    
 
-    let venue = document.querySelector('.resultCard');
-    venue.innerText = `${prefix.name} ${prefix.location.address}`;
+    //const venue = document.querySelector('.resultCard');
+    venue.innerHTML = `${prefix.name} <br> ${prefix.location.address}`;
 }
-
-/* For future 
-
-function createSearchResult(count) {
-    for (let i = 0; i < count; i++) {
-        let section = document.createElement("section");
-        let div = document.createElement("div");
-        let paragraph = document.createElement("p");
-        let CityName = document.createElement("h3");
-    }
+/*
+function createWeatherCard(city) {
+    const cityName = document.querySelector('#cityName');
+    cityName.innerText = city.name;
+    const weather = document.querySelector('.resultCard');
+    weather.innerHTML = `Väder:  ${city.weather[0].description} 
+                        <br> Tempratur: ${city.main.temp}
+                        `;
 }
 */
+function createSearchResult(city) {
+    for (let i = 0; i < 10; i++) {
+        let main = document.querySelector("main");
+        let section = document.createElement("section");
+        let div1 = document.createElement("div");
+        let div2 = document.createElement("div");
+        let paragraph = document.createElement("p");
+        let cityName = document.createElement("h3");
+        let prefix = city.response.groups[0].items[i].venue;
+
+        section.append(cityName);
+        section.append(div1);
+        div1.append(div2)
+        div2.append(paragraph);
+        main.append(section);
+
+        paragraph.innerHTML = `${prefix.name} <br> ${prefix.location.address}`;
+
+        div1.classList.add('resultPanel');
+        div2.classList.add('resultCard');
+    }
+}
+
 
 function clearResults(input) {   
     if (input != null){

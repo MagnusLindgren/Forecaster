@@ -9,15 +9,26 @@
 const searchButton = document.getElementById('searchButton');
 
 searchButton.addEventListener('click', function() {
-    let searchTerm = 'helsingborg'; //document.getElementById('searchBox').value;
-    console.log(`Search value: ${searchTerm}`);
-    const venue = fetchApi(getVenueUrl(searchTerm))
+    const onlyWeather = document.querySelector('#weather:checked');
+    const onlyAttractions = document.querySelector('#attractions:checked');
+    let searchTerm = document.getElementById('searchBox').value;
+    //console.log(`Search value: ${searchTerm}`);
+
+    // Kolla om checkbox för only weather är checked så den inte hämtar i onödan
+    if (onlyWeather == null) {
+        fetchApi(getVenueUrl(searchTerm))
+            .then(response => {
+                createVenueCard(response);
+            })
+    }
+    
+    // Kolla om only attraction är checked så den inte hämtar i onödan
+    if (onlyAttractions == null) {
+    fetchApi(getWeatherUrl(searchTerm))
         .then(response => {
-            createVenueCard(response);
-        })
-    
-    
-    //fetchApi(getWeatherUrl(searchTerm)).then(result => console.log(result));    
+            console.log(response);
+        }) 
+    }
 });
 
 

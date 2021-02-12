@@ -9,6 +9,8 @@
 const searchButton = document.getElementById('searchButton');
 
 searchButton.addEventListener('click', function() {
+    const result = document.querySelectorAll('.result');
+    clearResults(result);
     const onlyWeather = document.querySelector('#weather:checked');
     const onlyAttractions = document.querySelector('#attractions:checked');
     let searchTerm = document.getElementById('searchBox').value;
@@ -19,7 +21,7 @@ searchButton.addEventListener('click', function() {
         if (onlyWeather == null) {
             fetchApi(getVenueUrl(searchTerm))
                 .then(response => {
-                    createSearchResult(response);
+                    createVenueCard(response);
                 })
         }
 
@@ -27,7 +29,7 @@ searchButton.addEventListener('click', function() {
         if (onlyAttractions == null) {
         fetchApi(getWeatherUrl(searchTerm))
             .then(response => {
-                createSearchResult(response);
+                createWeatherCard(response);
             }) 
         }
     } else {
@@ -99,27 +101,39 @@ async function fetchApi(url) {
     }    
 }
 
-function createVenueCard(city, i) { 
-    
+function createVenueCard(city, i) {     
     //const cityName = document.querySelector('#cityName');
     cityName.innerText = city.response.headerFullLocation;
-
-    
 
     //const venue = document.querySelector('.resultCard');
     venue.innerHTML = `${prefix.name} <br> ${prefix.location.address}`;
 }
 
 function createWeatherCard(city) {
-    const cityName = document.querySelector('#cityName');
+    let main = document.querySelector("main");
+    let section = document.createElement("section");
+    let div1 = document.createElement("div");
+    let cityName = document.createElement("h3");
+    let div2 = document.createElement("div");
+    let paragraph = document.createElement("p");
+
+    section.append(cityName);        
+    div1.append(div2)
+    div2.append(paragraph);
+    section.append(div1);
+    main.append(section);
+
     cityName.innerText = city.name;
-    const weather = document.querySelector('.resultCard');
-    weather.innerHTML = `Väder:  ${city.weather[0].description} 
+    paragraph.innerHTML = `Väder:  ${city.weather[0].description} 
                         <br> Tempratur: ${city.main.temp}
                         `;
+
+    div1.classList.add('resultPanel');
+    div2.classList.add('resultCard');
+    section.classList.add('result');
 }
 
-function createSearchResult(city) {
+function createVenueCard(city) {
     let main = document.querySelector("main");
     let section = document.createElement("section");
     let div1 = document.createElement("div");
@@ -129,6 +143,7 @@ function createSearchResult(city) {
     main.append(section);
     
     div1.classList.add('resultPanel');
+    section.classList.add('result');
 
     for (let i = 0; i < city.response.groups[0].items.length; i++) {        
         let div2 = document.createElement("div");
@@ -148,11 +163,13 @@ function createSearchResult(city) {
         
         div2.classList.add('resultCard');
     }
+    
 }
 
-
 function clearResults(input) {   
-    if (input != null){
-        input.remove();
+    for (let i = 0; i < input.length; i++) {
+        input[i].remove();
     }
+        
+    
 }

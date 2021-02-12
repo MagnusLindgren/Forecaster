@@ -109,7 +109,7 @@ function createVenueCard(city, i) {
     //const venue = document.querySelector('.resultCard');
     venue.innerHTML = `${prefix.name} <br> ${prefix.location.address}`;
 }
-/*
+
 function createWeatherCard(city) {
     const cityName = document.querySelector('#cityName');
     cityName.innerText = city.name;
@@ -118,26 +118,34 @@ function createWeatherCard(city) {
                         <br> Tempratur: ${city.main.temp}
                         `;
 }
-*/
+
 function createSearchResult(city) {
-    for (let i = 0; i < 10; i++) {
-        let main = document.querySelector("main");
-        let section = document.createElement("section");
-        let div1 = document.createElement("div");
+    let main = document.querySelector("main");
+    let section = document.createElement("section");
+    let div1 = document.createElement("div");
+    let cityName = document.createElement("h3");
+
+    section.append(div1);
+    main.append(section);
+    
+    div1.classList.add('resultPanel');
+
+    for (let i = 0; i < city.response.groups[0].items.length; i++) {        
         let div2 = document.createElement("div");
         let paragraph = document.createElement("p");
-        let cityName = document.createElement("h3");
+        
         let prefix = city.response.groups[0].items[i].venue;
 
         section.append(cityName);
-        section.append(div1);
+        
         div1.append(div2)
         div2.append(paragraph);
-        main.append(section);
-
-        paragraph.innerHTML = `${prefix.name} <br> ${prefix.location.address}`;
-
-        div1.classList.add('resultPanel');
+        
+        paragraph.innerHTML = `${prefix.name}
+                                <br> ${prefix.categories[0].name} 
+                                <br> ${prefix.location.formattedAddress}`
+                                ;
+        
         div2.classList.add('resultCard');
     }
 }

@@ -12,22 +12,26 @@ searchButton.addEventListener('click', function() {
     const onlyWeather = document.querySelector('#weather:checked');
     const onlyAttractions = document.querySelector('#attractions:checked');
     let searchTerm = document.getElementById('searchBox').value;
-    //console.log(`Search value: ${searchTerm}`);
-
-    // Kolla om checkbox för only weather är checked så den inte hämtar i onödan
-    if (onlyWeather == null) {
-        fetchApi(getVenueUrl(searchTerm))
-            .then(response => {
-                createVenueCard(response);
-            })
-    }
     
-    // Kolla om only attraction är checked så den inte hämtar i onödan
-    if (onlyAttractions == null) {
-    fetchApi(getWeatherUrl(searchTerm))
-        .then(response => {
-            console.log(response);
-        }) 
+    //Ser till så att vi inte skickar tomma request till API:n
+    if (searchTerm != null && searchTerm != "") {
+        // Kolla om checkbox för only weather är checked så den inte hämtar i onödan
+        if (onlyWeather == null) {
+            fetchApi(getVenueUrl(searchTerm))
+                .then(response => {
+                    createVenueCard(response);
+                })
+        }
+
+        // Kolla om only attraction är checked så den inte hämtar i onödan
+        if (onlyAttractions == null) {
+        fetchApi(getWeatherUrl(searchTerm))
+            .then(response => {
+                console.log(response);
+            }) 
+        }
+    } else {
+        console.log("searchTerm did not contain anything")
     }
 });
 

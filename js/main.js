@@ -35,7 +35,7 @@ searchButton.addEventListener('click', function() {
     }
 });
 
-
+// Skapar openweather URL
 function getWeatherUrl(city) {
     const weatherUrl = new URL('https://api.openweathermap.org/data/2.5/weather');
 
@@ -49,6 +49,7 @@ function getWeatherUrl(city) {
     return weatherUrl;
 }
 
+// Skapar foursquare URL
 function getVenueUrl(city) {
     const venueUrl = new URL('https://api.foursquare.com/v2/venues/explore');
     const today = dateBuilder();
@@ -101,8 +102,10 @@ function createVenueCard(city) {
     let cityName = document.querySelector('#cityName');
     cityName.innerText = city.response.headerFullLocation;
 
+    let prefix = city.response.groups[0].items[0].venue;
+
     let venue = document.querySelector('.resultCard');
-    venue.innerText = city.response.groups[0].items[0].venue.name;
+    venue.innerText = `${prefix.name} ${prefix.location.address}`;
 }
 
 /* For future 

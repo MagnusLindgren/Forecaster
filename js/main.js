@@ -10,11 +10,22 @@ searchButton.addEventListener('click', function() {
     const result = document.querySelectorAll('.result');    
     const onlyWeather = document.querySelector('#weather:checked');
     const onlyAttractions = document.querySelector('#attractions:checked');
+    const filter = document.querySelector('#filter:checked');
     let searchTerm = document.getElementById('searchBox').value;
+    // Tömmer allt i .result innan nya resultat visas
     clearResults(result);
 
     //Ser till så att vi inte skickar tomma request till API:n
     if (searchTerm != null && searchTerm != "") {
+
+    // Kolla om only attraction är checked så den inte hämtar i onödan
+        if (onlyAttractions == null) {
+            fetchApi(getWeatherUrl(searchTerm))
+                .then(response => {
+                    createWeatherCard(response);
+                }) 
+            }
+
         // Kolla om checkbox för only weather är checked så den inte hämtar i onödan
         if (onlyWeather == null) {
             fetchApi(getVenueUrl(searchTerm))
@@ -22,16 +33,8 @@ searchButton.addEventListener('click', function() {
                     createVenueCard(response);
                 })
         }
-
-        // Kolla om only attraction är checked så den inte hämtar i onödan
-        if (onlyAttractions == null) {
-        fetchApi(getWeatherUrl(searchTerm))
-            .then(response => {
-                createWeatherCard(response);
-            }) 
-        }
     } else {
-        console.log("searchTerm did not contain anything")
+        console.log("searchTerm did not contain anything");
     }
 });
 
@@ -44,7 +47,7 @@ function getWeatherUrl(city) {
     weatherUrl.searchParams.append('appid', appID);
     weatherUrl.searchParams.append('mode', 'json');
     weatherUrl.searchParams.append('units', 'metric');
-    weatherUrl.searchParams.append('lang', 'se');
+    weatherUrl.searchParams.append('lang', 'en');
 
     return weatherUrl;
 }
@@ -83,6 +86,21 @@ function dateBuilder() {
     return todaysDate;
 }
 
+function getWeekday() {
+    var d = new Date();
+    var weekday = new Array(7);
+    weekday[0] = "Sunday";
+    weekday[1] = "Monday";
+    weekday[2] = "Tuesday";
+    weekday[3] = "Wednesday";
+    weekday[4] = "Thursday";
+    weekday[5] = "Friday";
+    weekday[6] = "Saturday";
+  
+    var n = weekday[d.getDay()];
+    return n;
+  }
+
 /* Hämtar API utifrån en URL*/
 async function fetchApi(url) {
     try {
@@ -106,18 +124,25 @@ function createWeatherCard(city) {
     let cityName = document.createElement("h3");
     let div2 = document.createElement("div");
     let paragraph = document.createElement("p");
+    let day = document.createElement("h4");
+
+    let iconPrefix = 'https://openweathermap.org/img/w/';
 
     section.append(cityName);       
-    div1.append(div2)
+    div1.append(div2);
+    div2.append(day);
     div2.append(paragraph);
     section.append(div1);
     
     main.append(section);
 
-    cityName.innerText = `Väder i ${city.name}`;
-    paragraph.innerHTML = `Väder:  ${city.weather[0].description} 
-                        <br> Tempratur: ${city.main.temp}
-                        `;
+    cityName.innerText = `Current weather in ${city.name}`;
+    day.innerText = getWeekday();
+    paragraph.innerHTML =  `<img src="${iconPrefix}${city.weather[0].icon}.png">
+                            <br> Condition:  ${city.weather[0].description} 
+                            <br> Temprature: ${city.main.temp}
+                            <br> Wind: ${city.wind.speed} m/s
+                            `;
 
     div1.classList.add('resultPanel');
     div2.classList.add('resultCard');
@@ -143,18 +168,25 @@ function createVenueCard(city) {
     for (let i = 0; i < city.response.groups[0].items.length; i++) {        
         let div2 = document.createElement("div");
         let paragraph = document.createElement("p");
-        
-        let prefix = city.response.groups[0].items[i].venue;
-        //let img = fetchApi(imgUrl(prefix));
+        let name = document.createElement("h4");
+
+        let venuePrefix = city.response.groups[0].items[i].venue;
+        let iconPrefix = venuePrefix.categories[0].icon;
+        let iconLink = `${iconPrefix.prefix}bg_64${iconPrefix.suffix}`;
+
+        //let img = fetchApi(imgUrl(prefix)); Hinner inte
 
         section.append(cityName);
         
-        div1.append(div2)
+        div1.append(div2);
+        div2.append(name);
         div2.append(paragraph);
         
-        paragraph.innerHTML = `${prefix.name}
-                                <br> ${prefix.categories[0].name}                                
-                                <br> ${prefix.location.formattedAddress}
+        name.innerText = `${venuePrefix.name}`;
+        
+        paragraph.innerHTML = ` <br> <img src="${iconLink}"
+                                <br> Address:                              
+                                <br> ${venuePrefix.location.formattedAddress}
                                 `;
         
         div2.classList.add('resultCard');
@@ -164,7 +196,7 @@ function createVenueCard(city) {
     section.append(div1);            
     main.append(section);
     
-    cityName.innerText = `Sevärt i ${city.response.headerFullLocation}`;
+    cityName.innerText = `Top Attractions in ${city.response.headerFullLocation}`;
 
     div1.classList.add('resultPanel');
     section.classList.add('result');

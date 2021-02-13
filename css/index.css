@@ -99,7 +99,16 @@ body {
     max-width: 33%;
 }
 
-.resultCard h5 {
+.resultCard h4 {
     text-align: center;
+}
+
+.resultCard p {
+    display: flex;
+    flex-direction: row;
+}
+
+.resultCard img {
+    margin-right: 1em;
 }
 

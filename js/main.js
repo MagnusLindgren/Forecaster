@@ -7,13 +7,12 @@ const searchBox = document.getElementById('searchBox');
 const clientId = 'UT23XCWOFEUB3EXA40EQXRVCLN1NTE1XEJLS1JUNJAWQFSYV';
 const clientSecret = 'WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM';
 const appID = '984e8b07157055164de5d508d1e7e094';
-//const searchTerm = searchBox.value;
 
 // TODO Får dubbla resultat ibland, inte ofta men ibland
 searchBox.addEventListener('change', searchExecution);
 searchButton.addEventListener('click', searchExecution);
 
-
+// Huvud funktion. När man klickar sök så händer magin
 function searchExecution() {
     const result = document.querySelectorAll('.result');    
     const onlyWeather = document.querySelector('#weather:checked');
@@ -29,8 +28,14 @@ function searchExecution() {
 
     // Kolla om only attraction är checked så den inte hämtar i onödan
         if (onlyAttractions == null) {
+            /*  Hämta vädret om only attractions inte är checked.
+                Jag har skapat det så att jag först hämtar json från API:n 
+                sedan skickar jag det direkt vidare till det sorts kort jag 
+                vill skapa.
+            */
             fetchApi(getWeatherUrl(searchTerm))
                 .then(response => {
+                    // Skapa väderkortet
                     createWeatherCard(response);
                 }) 
             }
@@ -58,6 +63,7 @@ function getWeatherUrl(city) {
     weatherUrl.searchParams.append('units', 'metric');
     weatherUrl.searchParams.append('lang', 'en');
 
+    // returnera URL
     return weatherUrl;
 }
 
@@ -73,6 +79,7 @@ function getVenueUrl(city) {
     venueUrl.searchParams.append('v', today);
     venueUrl.searchParams.append('limit', '10');
 
+    // returnera URL
     return venueUrl;
 }
 
@@ -112,8 +119,11 @@ function getWeekday() {
     return n;
   }
 
-/* Hämtar API utifrån en URL */
+/*  Hämtar API utifrån en URL 
+
+*/
 async function fetchApi(url) {
+    // En try för lite felhantering
     try {
         const response = await fetch(url);
         if (response.ok) {
@@ -152,8 +162,8 @@ function createWeatherCard(city) {
     main.append(section);
 
     // lägg till innehåll i de olika elementen
-    cityName.innerText = `Current weather in ${city.name}`;
-    day.innerText = getWeekday();
+    cityName.innerText = `Current weather in ${city.name}`; // så vi vet vilken stad
+    day.innerText = getWeekday(); // Lägger till dagens dag
     paragraph.innerHTML =  `<img src="${iconPrefix}${city.weather[0].icon}.png">
                             <br> Condition:  ${city.weather[0].description} 
                             <br> Temprature: ${city.main.temp}
@@ -205,7 +215,8 @@ function createVenueCard(city) {
         
         paragraph.innerHTML = ` <br> <img src="${iconLink}">
                                  Address:                              
-                                <br> ${venuePrefix.location.formattedAddress}
+                                <br> ${venuePrefix.location.address}
+                                <br> ${venuePrefix.location.postalCode} ${venuePrefix.location.city}
                                 `;
         
         div2.classList.add('resultCard');
@@ -222,6 +233,7 @@ function createVenueCard(city) {
     cityName.classList.add('cityName');    
 }
 
+// Rensar utifrån ingående parameter
 function clearResults(input) {   
     for (let i = 0; i < input.length; i++) {
         input[i].remove();

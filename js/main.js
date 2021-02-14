@@ -2,16 +2,25 @@
 
 // Viktiga variablar
 const searchButton = document.getElementById('searchButton');
+const searchBox = document.getElementById('searchBox');
+
 const clientId = 'UT23XCWOFEUB3EXA40EQXRVCLN1NTE1XEJLS1JUNJAWQFSYV';
 const clientSecret = 'WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM';
 const appID = '984e8b07157055164de5d508d1e7e094';
+//const searchTerm = searchBox.value;
 
-searchButton.addEventListener('click', function() {
+// TODO Får dubbla resultat ibland, inte ofta men ibland
+searchBox.addEventListener('change', searchExecution);
+searchButton.addEventListener('click', searchExecution);
+
+
+function searchExecution() {
     const result = document.querySelectorAll('.result');    
     const onlyWeather = document.querySelector('#weather:checked');
     const onlyAttractions = document.querySelector('#attractions:checked');
-    const filter = document.querySelector('#filter:checked');
-    let searchTerm = document.getElementById('searchBox').value;
+    //const filter = document.querySelector('#filter:checked');
+    const searchTerm = searchBox.value;
+
     // Tömmer allt i .result innan nya resultat visas
     clearResults(result);
 
@@ -36,7 +45,7 @@ searchButton.addEventListener('click', function() {
     } else {
         console.log("searchTerm did not contain anything");
     }
-});
+}
 
 // Skapar openweather URL
 function getWeatherUrl(city) {
@@ -69,13 +78,14 @@ function getVenueUrl(city) {
 
 /* Funktion för att skapa datum som jag skapade för att förenkla url:en ytterligare*/
 function dateBuilder() {
-    let dateToday = new Date();
+    const dateToday = new Date();
     let todaysDate, y, m, d;
 
     y = dateToday.getFullYear().toString();
-    m = (dateToday.getMonth()+1).toString();
+    m = (dateToday.getMonth()+1).toString(); // +1 eftersom 'month' är noll indexerat
     d = dateToday.getDate().toString();
 
+    // lägger till en nolla om längden på värdet är mindre än 2
     if (m.length < 2) 
     m = '0' + m;
     if (d.length < 2) 
@@ -86,6 +96,7 @@ function dateBuilder() {
     return todaysDate;
 }
 
+// Hittade ingen dag parameter på openweather så skapade en egen funktion för att få ut den
 function getWeekday() {
     var d = new Date();
     var weekday = new Array(7);
@@ -101,12 +112,12 @@ function getWeekday() {
     return n;
   }
 
-/* Hämtar API utifrån en URL*/
+/* Hämtar API utifrån en URL */
 async function fetchApi(url) {
     try {
-        let response = await fetch(url);
+        const response = await fetch(url);
         if (response.ok) {
-            let jsonResponse = await response.json();
+            const jsonResponse = await response.json();
             console.log(JSON.stringify(jsonResponse, null, " "));
             return jsonResponse;
         } else {
@@ -117,17 +128,21 @@ async function fetchApi(url) {
     }    
 }
 
+/* Skapa ett väderkort utifrån svaret vi fick från fetchApi */
 function createWeatherCard(city) {
-    let main = document.querySelector("main");
-    let section = document.createElement("section");
-    let div1 = document.createElement("div");
-    let cityName = document.createElement("h3");
-    let div2 = document.createElement("div");
-    let paragraph = document.createElement("p");
-    let day = document.createElement("h4");
+    const main = document.querySelector("main");
+    // Skapa alla element vi behöver
+    const section = document.createElement("section");
+    const div1 = document.createElement("div");
+    const cityName = document.createElement("h3");
+    const div2 = document.createElement("div");
+    const paragraph = document.createElement("p");
+    const day = document.createElement("h4");
 
-    let iconPrefix = 'https://openweathermap.org/img/w/';
+    // Url till ikon
+    const iconPrefix = 'https://openweathermap.org/img/w/';
 
+    // lägg till elementen vi skapat
     section.append(cityName);       
     div1.append(div2);
     div2.append(day);
@@ -136,6 +151,7 @@ function createWeatherCard(city) {
     
     main.append(section);
 
+    // lägg till innehåll i de olika elementen
     cityName.innerText = `Current weather in ${city.name}`;
     day.innerText = getWeekday();
     paragraph.innerHTML =  `<img src="${iconPrefix}${city.weather[0].icon}.png">
@@ -144,12 +160,14 @@ function createWeatherCard(city) {
                             <br> Wind: ${city.wind.speed} m/s
                             `;
 
+    // Lägg till klasser från CSS till elementen
     div1.classList.add('resultPanel');
     div2.classList.add('resultCard');
     section.classList.add('result');
     cityName.classList.add('cityName');
 }
 
+/* En egen funktion för att skapa en URL för ikoner till venues */
 function imgUrl(venue) {
     const imgUrl = new URL(`https://api.foursquare.com/v2/venues/${venue.id}/photos`);
     const today = dateBuilder();
@@ -159,33 +177,34 @@ function imgUrl(venue) {
     imgUrl.searchParams.append('v', today);
 }
 
+/* Skapa venuekort utifrån svaret vi fick från fetchApi */
 function createVenueCard(city) {
-    let main = document.querySelector("main");
-    let section = document.createElement("section");
-    let div1 = document.createElement("div");
-    let cityName = document.createElement("h3");
+    const main = document.querySelector("main");
+    // Skapa alla element vi behöver för resultat panelen
+    const section = document.createElement("section");
+    const div1 = document.createElement("div");
+    const cityName = document.createElement("h3");
 
-    for (let i = 0; i < city.response.groups[0].items.length; i++) {        
-        let div2 = document.createElement("div");
-        let paragraph = document.createElement("p");
-        let name = document.createElement("h4");
+    for (let i = 0; i < city.response.groups[0].items.length; i++) { 
+        // Skapa element per 'sak' vi fick i svaret       
+        const div2 = document.createElement("div");
+        const paragraph = document.createElement("p");
+        const name = document.createElement("h4");
 
-        let venuePrefix = city.response.groups[0].items[i].venue;
-        let iconPrefix = venuePrefix.categories[0].icon;
-        let iconLink = `${iconPrefix.prefix}bg_64${iconPrefix.suffix}`;
+        // Lite varibler för att förenkla
+        const venuePrefix = city.response.groups[0].items[i].venue;
+        const iconPrefix = venuePrefix.categories[0].icon;
+        const iconLink = `${iconPrefix.prefix}bg_64${iconPrefix.suffix}`;
 
-        //let img = fetchApi(imgUrl(prefix)); Hinner inte
-
-        section.append(cityName);
-        
+        // lägg till elementen vi skapat per 'sak'     
         div1.append(div2);
         div2.append(name);
         div2.append(paragraph);
         
         name.innerText = `${venuePrefix.name}`;
         
-        paragraph.innerHTML = ` <br> <img src="${iconLink}"
-                                <br> Address:                              
+        paragraph.innerHTML = ` <br> <img src="${iconLink}">
+                                 Address:                              
                                 <br> ${venuePrefix.location.formattedAddress}
                                 `;
         
@@ -200,10 +219,7 @@ function createVenueCard(city) {
 
     div1.classList.add('resultPanel');
     section.classList.add('result');
-    cityName.classList.add('cityName');
-
-
-    
+    cityName.classList.add('cityName');    
 }
 
 function clearResults(input) {   

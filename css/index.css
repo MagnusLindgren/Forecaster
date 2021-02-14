@@ -45,7 +45,7 @@ body {
     border: 3px solid cadetblue;
     border-right: none;
     padding: 5px;
-    height: 20px;
+    height: 36px;
     border-radius: 5px 0 0 5px;
     outline: none;
     color: #9DBFAF;
@@ -87,16 +87,18 @@ body {
 }
 
 .resultCard {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: left;
     text-align: left;
     border: 2px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    margin: 2em auto;    
+    margin:  2em;   
     padding: 2em;
-    max-width: 33%;
+    width: 300px;
+    height: 125px;
+    box-sizing: content-box;
+}
+
+.resultCard:hover {
+    transform: scale(1.1);
 }
 
 .resultCard h4 {
@@ -109,6 +111,7 @@ body {
 }
 
 .resultCard img {
+    width: 5em;
+    height: 5em;
     margin-right: 1em;
 }
-

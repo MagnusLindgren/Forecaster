@@ -33,10 +33,14 @@ function searchExecution() {
 
     // Kolla om only attraction är checked så den inte hämtar i onödan
         if (onlyAttractions == null) {
-            /*  Hämta vädret om only attractions inte är checked.
+            /*  
+                Hämta vädret om only attractions inte är checked.
                 Jag har skapat det så att jag först hämtar json från API:n 
                 sedan skickar jag det direkt vidare till det sorts kort jag 
                 vill skapa.
+                Skapar först en url via getWeatherUrl med förvalda parametrar
+                för att sedan skicka url:en till fetchApi som kommunicerar med
+                servern.
             */
             fetchApi(getWeatherUrl(searchTerm))
                 .then(response => {
@@ -133,25 +137,30 @@ function getWeekday() {
   }
 
 /*  
-    Hämtar API utifrån en URL 
+    Hämtar data från API utifrån en URL 
     Async förvandlar functionen till ett 'promise'.
     Async gör så att await kan användas.
     Await pausar koden tills att 'promise' är klart och har returnerat ett resultat.
+
+    Det är här all kommunikation sker. Jag frågar efter data enligt de parametrar jag angett i 
+    getVenueUrl och getWeatherUrl. 
 */
 async function fetchApi(url) {
     // En try för lite felhantering
     try {
-        const response = await fetch(url);
+        const response = await fetch(url); // väntar på att ett 'promise ska bli klart.
+        // Om statusen är ok (200) 
         if (response.ok) {
-            const jsonResponse = await response.json();
+            const jsonResponse = await response.json(); // Väntar på att response ska omvandlas till ett objekt.
             //console.log(JSON.stringify(jsonResponse, null, " ")); //Hade denna i utvecklingsfasen.
             return jsonResponse; // returnera svaret(färdigt 'promise')
         } else {
             errorMsg(`Could not fetch from ${url}`); // Fel meddelande till användare (egen anm. Kom på något bättre)
-            console.log(url + " not loaded successfully");
+            console.log(url + " not loaded successfully"); // För utveckling
         }        
     } catch (error) {
-            console.log(error);
+            errorMsg("Network error, check you internet connection."); // Felmed för nätverksfel.
+            console.log(error.message); 
     }    
 }
 

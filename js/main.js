@@ -282,4 +282,5 @@ function errorMsg(output) {
     const section = document.createElement('section');
     main.append(section);
     section.innerText = output;
+    section.classList.add('result');
 }

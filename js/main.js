@@ -8,7 +8,7 @@ const clientId = 'UT23XCWOFEUB3EXA40EQXRVCLN1NTE1XEJLS1JUNJAWQFSYV';
 const clientSecret = 'WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM';
 const appID = '984e8b07157055164de5d508d1e7e094';
 
-// TODO Får dubbla resultat ibland, inte ofta men ibland
+// TODO Får dubbla resultat ibland, inte ofta men ibland. Dessutom renderar den i extremt sällsynta fall i fel ordning.
 searchBox.addEventListener('change', searchExecution);
 searchButton.addEventListener('click', searchExecution);
 
@@ -128,13 +128,13 @@ async function fetchApi(url) {
         const response = await fetch(url);
         if (response.ok) {
             const jsonResponse = await response.json();
-            console.log(JSON.stringify(jsonResponse, null, " "));
+            //console.log(JSON.stringify(jsonResponse, null, " "));
             return jsonResponse;
         } else {
             console.log(url + " not loaded successfully");
         }        
     } catch (error) {
-            console.log("Error");
+            console.log(error);
     }    
 }
 

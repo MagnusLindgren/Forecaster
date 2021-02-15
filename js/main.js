@@ -9,7 +9,12 @@ const clientSecret = 'WSOBYLFKSXJAJYWV1MGFW45RPIY0DRI3YDC0I0EDRRLEDTEM';
 const appID = '984e8b07157055164de5d508d1e7e094';
 
 // TODO Får dubbla resultat ibland, inte ofta men ibland. Dessutom renderar den i extremt sällsynta fall i fel ordning.
-searchBox.addEventListener('change', searchExecution);
+searchBox.addEventListener('keyup', function(e) {
+    e.preventDefault();
+    if (e.keyCode == 13) {
+        searchButton.click();
+    }
+});
 searchButton.addEventListener('click', searchExecution);
 
 // Huvud funktion. När man klickar sök så händer magin
@@ -17,7 +22,7 @@ function searchExecution() {
     const result = document.querySelectorAll('.result');    
     const onlyWeather = document.querySelector('#weather:checked');
     const onlyAttractions = document.querySelector('#attractions:checked');
-    //const filter = document.querySelector('#filter:checked');
+    const filter = document.querySelector('#filter:checked');
     const searchTerm = searchBox.value;
 
     // Tömmer allt i .result innan nya resultat visas
@@ -44,11 +49,19 @@ function searchExecution() {
         if (onlyWeather == null) {
             fetchApi(getVenueUrl(searchTerm))
                 .then(response => {
-                    createVenueCard(response);
+                    // kolla om användaren vill sortera alfabetiskt
+                    if (filter == null) {
+                        // Skapa venuekorten
+                        createVenueCard(response);
+                    } else {
+                        // Skapa venuekorten i alfabetisk ordning
+                        console.log("Sorting response by venue name")
+                        createVenueCard(sortArr(response));                        
+                    }
                 })
         }
     } else {
-        console.log("searchTerm did not contain anything");
+        errorMsg("Please enter a cityname in the searchbar!");
     }
 }
 
@@ -119,8 +132,11 @@ function getWeekday() {
     return n;
   }
 
-/*  Hämtar API utifrån en URL 
-
+/*  
+    Hämtar API utifrån en URL 
+    Async förvandlar functionen till ett 'promise'.
+    Async gör så att await kan användas.
+    Await pausar koden tills att 'promise' är klart och har returnerat ett resultat.
 */
 async function fetchApi(url) {
     // En try för lite felhantering
@@ -128,9 +144,10 @@ async function fetchApi(url) {
         const response = await fetch(url);
         if (response.ok) {
             const jsonResponse = await response.json();
-            //console.log(JSON.stringify(jsonResponse, null, " "));
-            return jsonResponse;
+            //console.log(JSON.stringify(jsonResponse, null, " ")); //Hade denna i utvecklingsfasen.
+            return jsonResponse; // returnera svaret(färdigt 'promise')
         } else {
+            errorMsg(`Could not fetch from ${url}`); // Fel meddelande till användare (egen anm. Kom på något bättre)
             console.log(url + " not loaded successfully");
         }        
     } catch (error) {
@@ -164,6 +181,11 @@ function createWeatherCard(city) {
     // lägg till innehåll i de olika elementen
     cityName.innerText = `Current weather in ${city.name}`; // så vi vet vilken stad
     day.innerText = getWeekday(); // Lägger till dagens dag
+
+    /* 
+        Lägger till information utifrån olika parametrar.
+        Ikonen hämtas från en webbadress med 'city.weather[0]' inlagd för att hitta rätt ikon.
+    */
     paragraph.innerHTML =  `<img src="${iconPrefix}${city.weather[0].icon}.png">
                             <br> Condition:  ${city.weather[0].description} 
                             <br> Temprature: ${city.main.temp}
@@ -195,6 +217,7 @@ function createVenueCard(city) {
     const div1 = document.createElement("div");
     const cityName = document.createElement("h3");
 
+    // Loop för att lägga in varje item i arrayen
     for (let i = 0; i < city.response.groups[0].items.length; i++) { 
         // Skapa element per 'sak' vi fick i svaret       
         const div2 = document.createElement("div");
@@ -221,13 +244,16 @@ function createVenueCard(city) {
         
         div2.classList.add('resultCard');
     }
-  
+
+    // Lägg till element
     section.append(cityName);
     section.append(div1);            
     main.append(section);
     
+    // Lägg till vilken stad 
     cityName.innerText = `Top Attractions in ${city.response.headerFullLocation}`;
 
+    // Lägg till klasser från CSS
     div1.classList.add('resultPanel');
     section.classList.add('result');
     cityName.classList.add('cityName');    
@@ -238,4 +264,22 @@ function clearResults(input) {
     for (let i = 0; i < input.length; i++) {
         input[i].remove();
     }    
+}
+
+// Sortera alfabetiskt
+function sortArr(input) {
+    const prefix = input.response.groups[0].items;
+    prefix.sort(function(a,b){
+        if(a.venue.name == b.venue.name) return 0;
+        return (a.venue.name < b.venue.name) ? -1 : 1;
+      })
+      return input;
+}
+
+// För felmeddelande
+function errorMsg(output) {
+    const main = document.querySelector('main');
+    const section = document.createElement('section');
+    main.append(section);
+    section.innerText = output;
 }

@@ -148,7 +148,7 @@ function getWeekday() {
 async function fetchApi(url) {
     // En try för lite felhantering
     try {
-        const response = await fetch(url); // väntar på att ett 'promise ska bli klart.
+        const response = await fetch(url); // väntar på att ett 'promise ska bli klart. Fetch skickar en http request. jag får tillbaka ett http response.
         // Om statusen är ok (200) 
         if (response.ok) {
             const jsonResponse = await response.json(); // Väntar på att response ska omvandlas till ett objekt.
